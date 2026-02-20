@@ -49,17 +49,17 @@
         </div>
 
         <!-- ===== PROGRESSIVE QUESTION NAVIGATOR ===== -->
-<div class="my-4 text-center" id="questionNavigator">
+<!-- ===== PROGRESSIVE QUESTION NAVIGATOR (RESPONSIVE) ===== -->
+<div class="my-4 text-center overflow-auto" id="questionNavigator" style="white-space: nowrap; padding: 5px 0;">
     @foreach($questions as $index => $question)
         <button type="button"
                 class="btn btn-sm mb-1 question-nav-btn"
                 data-index="{{ $index }}"
-                style="width:35px; height:35px; border-radius:50%; background-color:gray; color:white;">
+                style="width:35px; height:35px; border-radius:50%; background-color:gray; color:white; display:inline-block; margin-right:5px;">
             {{ $index + 1 }}
         </button>
     @endforeach
 </div>
-
 
     </form>
 </div>
@@ -133,10 +133,8 @@
     const questionCards = document.querySelectorAll('.question-card');
     let currentIndex = {{ $currentIndex }};
 
-    
-
-    //questions navigation bar colour
- const navButtons = document.querySelectorAll('.question-nav-btn');
+//QUESTION NAVIGATION COLOR    
+const navButtons = document.querySelectorAll('.question-nav-btn');
 
 function updateNavColors() {
     questionCards.forEach((card, i) => {
@@ -144,6 +142,12 @@ function updateNavColors() {
         const answered = Array.from(card.querySelectorAll('input[type="radio"]')).some(r => r.checked);
         btn.style.backgroundColor = answered ? 'green' : 'gray';
     });
+
+    // Scroll current question button into view (responsive)
+    const currentBtn = navButtons[currentIndex];
+    if (currentBtn) {
+        currentBtn.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+    }
 }
 
 // Make navigator buttons clickable
@@ -152,13 +156,12 @@ navButtons.forEach(btn => {
         const index = parseInt(btn.dataset.index);
         currentIndex = index;
         showQuestion(currentIndex);
+        updateNavColors();
     });
 });
 
 // Call this initially to set colors
 updateNavColors();
-
-
 
 
 
