@@ -507,7 +507,7 @@ public function EditCbtCreate($id)
             return redirect()
                 ->route('cbt.results.form')
                 ->with([
-                    'message' => 'Previous attempt deleted successfully.',
+                    'message' => 'Previous attempt deleted. Student can now retake the test afresh.',
                     'alert-type' => 'success'
                 ]);
 

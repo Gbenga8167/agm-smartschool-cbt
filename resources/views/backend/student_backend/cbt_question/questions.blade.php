@@ -1,5 +1,34 @@
+
 @extends('backend.student_backend.student_dashboard')
 @section('student')
+
+<style>
+/* ===== Progressive Nav - Desktop (default) ===== */
+#questionNavigator {
+    white-space: normal;
+    overflow: visible;
+}
+
+/* ===== Progressive Nav - Mobile Only ===== */
+@media (max-width: 768px) {
+    #questionNavigator {
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+
+    #questionNavigator .question-nav-btn {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
+        margin-right: 4px;
+    }
+}
+
+</style>
 
 
 <div class="container">
@@ -50,7 +79,7 @@
 
         <!-- ===== PROGRESSIVE QUESTION NAVIGATOR ===== -->
 <!-- ===== PROGRESSIVE QUESTION NAVIGATOR (RESPONSIVE) ===== -->
-<div class="my-4 text-center overflow-auto" id="questionNavigator" style="white-space: nowrap; padding: 5px 0;">
+<div class="my-4 text-center" id="questionNavigator">
     @foreach($questions as $index => $question)
         <button type="button"
                 class="btn btn-sm mb-1 question-nav-btn"
@@ -143,11 +172,13 @@ function updateNavColors() {
         btn.style.backgroundColor = answered ? 'green' : 'gray';
     });
 
-    // Scroll current question button into view (responsive)
+// Scroll only on mobile screens
+if (window.innerWidth <= 768) {
     const currentBtn = navButtons[currentIndex];
     if (currentBtn) {
         currentBtn.scrollIntoView({ behavior: 'smooth', inline: 'center' });
     }
+  }
 }
 
 // Make navigator buttons clickable
