@@ -9,6 +9,7 @@ class AcademicSession extends Model
      protected $fillable = [
         'name',
         'is_current',
+        'test_limit', 
     
     ];
 }

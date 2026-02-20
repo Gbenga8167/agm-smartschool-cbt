@@ -104,6 +104,7 @@ $adminData = App\Models\User::findOrFail(Auth::user()->id);
                 </a>
                 <ul class="sub-menu" aria-expanded="false">
                     <li><a href="{{route('admin.cbt.test.create')}}">Create CBT Test</a></li>
+                    <li><a href="{{route('admin.question.limit')}}">Question limit</a></li>
                     <li><a href="{{route('admin.cbt.tests.index')}}">Add CBT Questions</a></li>
                     <li><a href="{{route('cbt.results.form')}}">Check CBT Result</a></li>
                 </ul>

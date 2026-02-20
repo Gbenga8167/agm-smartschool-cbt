@@ -9,7 +9,6 @@ use App\Models\CbtQuestion;
 use App\Models\CbtTest;
 use App\Models\StudentClasses;
 use App\Models\Subject;
-use App\Models\Teacher;
 use App\Models\Term;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -521,5 +520,31 @@ public function EditCbtCreate($id)
         }
     }
 
+
+
+    // ADMIN EDIT QUESTIONS LIMIT METHOD
+    public function editLimit(){
+        
+    $session = AcademicSession::first();
+    return view('backend.admin_backend.cbt_test_question.question_limit', compact('session'));
+}
+
+    public function updateLimit(Request $request){
+
+     $request->validate([
+        'test_limit' => 'required|integer|min:1'
+    ]);
+
+    $session = AcademicSession::first();
+
+    $session->update([
+        'test_limit' => $request->test_limit
+    ]);
+
+    return back()->with([
+        'message' => 'Question limit updated successfully!',
+        'alert-type' => 'success'
+    ]);
+}
 
 }

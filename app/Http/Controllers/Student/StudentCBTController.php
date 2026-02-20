@@ -96,17 +96,6 @@ class StudentCBTController extends Controller
             ->where('status', 'in_progress')
             ->first();
 
-        // ✅ If no active attempt, create fresh
-       /* if (!$attempt) {
-            $attempt = CbtAttempt::create([
-                'cbt_test_id' => $cbtTest->id,
-                'student_id'  => $student->id,
-                'started_at'  => now()->utc(), // 🔒 always store UTC
-                'status'      => 'in_progress',
-            ]);
-        }
-*/
-
       // Create new attempt
     if (!$attempt) {
 
@@ -166,8 +155,8 @@ if ($attempt->session_token) {
     }
 
 
-            // --- RANDOMIZE QUESTIONS ONLY FIRST TIME ---
-    if (!$attempt->question_order) {
+            // --- RANDOMIZE QUESTIONS ONLY FIRST TIME WITH NO LIMIT ---
+    /*if (!$attempt->question_order) {
         $questions = $cbtTest->questions()->inRandomOrder()->get();
         $attempt->update([
             'question_order' => $questions->pluck('id')->toJson()
@@ -179,7 +168,33 @@ if ($attempt->session_token) {
                         ->orderByRaw("FIELD(id, ".implode(',', $questionIds).")")
                         ->get();
     }
+                        */
 
+
+              // --- RANDOMIZE QUESTIONS ONLY FIRST TIME WITH LIMITED QUESTIONS(50)---
+          if (!$attempt->question_order) {
+              // Fetch all questions in random order
+              $allQuestions = $cbtTest->questions()->inRandomOrder()->get();
+          
+              // Limit to 50 questions (or less if teacher sets <50)
+              $session = AcademicSession::first();
+              $limit = $session->test_limit;
+              $selectedQuestions = $allQuestions->take($limit);
+          
+              // Save the selected question IDs in attempt
+              $attempt->update([
+                  'question_order' => $selectedQuestions->pluck('id')->toJson()
+              ]);
+          
+              $questions = $selectedQuestions; // pass to view
+          } else {
+              // Fetch in saved order (for refresh / continue)
+              $questionIds = json_decode($attempt->question_order);
+              $questions = CbtQuestion::whereIn('id', $questionIds)
+                              ->orderByRaw("FIELD(id, ".implode(',', $questionIds).")")
+                              ->get();
+          }
+          
     
 
         // ✅ TIMER LOGIC → started_at (UTC) + duration

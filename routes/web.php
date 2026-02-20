@@ -399,6 +399,11 @@ Route::get('/', function () {
 
     Route::post('/admin/cbt-results/{attempt}/retake', 'retake')->name('cbt.retake');
 
+
+    // ADMIN SET QUESTIONS LIMIT
+    Route::get('/admin/question-limit', 'editLimit')->name('admin.question.limit');
+    Route::post('/admin/question-limit', 'updateLimit')->name('admin.question.limit.update');
+
     });
   
 
