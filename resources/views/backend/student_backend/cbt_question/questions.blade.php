@@ -47,6 +47,20 @@
             <button type="button" id="nextBtn" class="btn btn-primary">Next</button>
             <button type="button" id="submitBtn" class="btn btn-success" style="display:none">Submit Test</button>
         </div>
+
+        <!-- ===== PROGRESSIVE QUESTION NAVIGATOR ===== -->
+<div class="my-4 text-center" id="questionNavigator">
+    @foreach($questions as $index => $question)
+        <button type="button"
+                class="btn btn-sm mb-1 question-nav-btn"
+                data-index="{{ $index }}"
+                style="width:35px; height:35px; border-radius:50%; background-color:gray; color:white;">
+            {{ $index + 1 }}
+        </button>
+    @endforeach
+</div>
+
+
     </form>
 </div>
 
@@ -94,7 +108,7 @@
             const attemptId = this.dataset.attempt;
             const questionId = this.dataset.question;
             const selected = this.value;
-
+            
             fetch("{{ url('student/cbt/save-answer') }}/" + attemptId + "/" + questionId, {
                 method: 'POST',
                 headers: {
@@ -104,6 +118,10 @@
                 },
                 body: JSON.stringify({ selected_option: selected })
             })
+
+            // NavColor
+            .then(() => updateNavColors())
+
             .catch(err => {
                 console.error('Save failed', err);
                 alert('Failed to save answer. Please check your connection.');
@@ -114,6 +132,35 @@
     // ==== NAVIGATION ====
     const questionCards = document.querySelectorAll('.question-card');
     let currentIndex = {{ $currentIndex }};
+
+    
+
+    //questions navigation bar colour
+ const navButtons = document.querySelectorAll('.question-nav-btn');
+
+function updateNavColors() {
+    questionCards.forEach((card, i) => {
+        const btn = navButtons[i];
+        const answered = Array.from(card.querySelectorAll('input[type="radio"]')).some(r => r.checked);
+        btn.style.backgroundColor = answered ? 'green' : 'gray';
+    });
+}
+
+// Make navigator buttons clickable
+navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const index = parseInt(btn.dataset.index);
+        currentIndex = index;
+        showQuestion(currentIndex);
+    });
+});
+
+// Call this initially to set colors
+updateNavColors();
+
+
+
+
 
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -138,9 +185,12 @@
     body: JSON.stringify({ index: index })
 });
 
+    // Update progressive nav colors
+    updateNavColors();
 
+}
 
-    }
+    
 
     nextBtn.addEventListener('click', () => {
         if (currentIndex < questionCards.length - 1) {
