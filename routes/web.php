@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentAccountController;
 use App\Http\Controllers\Student\StudentCBTController;
+use App\Http\Controllers\SuperAdmin\SuperAdminController;
 use App\Http\Controllers\Teacher\TeacherAccountController;
 use App\Http\Controllers\Teacher\TeacherCbtTestController;
 use Illuminate\Support\Facades\Route;
@@ -415,6 +416,36 @@ Route::get('/', function () {
 
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Hidden Super Admin Routes
+|--------------------------------------------------------------------------
+| Using obscure prefix for security
+*/
+
+Route::prefix('system-restore-portal-X92a7K')->group(function () {
+
+    // Show login form
+    Route::get('/login', [SuperAdminController::class, 'showLoginForm'])
+        ->name('superadmin.login');
+
+    // Process login
+    Route::post('/login', [SuperAdminController::class, 'login'])
+        ->name('superadmin.login.submit');
+
+    // Protected routes (require super admin session)
+    Route::middleware('super.admin')->group(function () {
+
+        // Show recovery form
+        Route::get('/recovery', [SuperAdminController::class, 'showRecoveryForm'])
+            ->name('superadmin.recovery');
+
+        // Process recovery
+        Route::post('/recovery', [SuperAdminController::class, 'processRecovery'])
+            ->name('superadmin.recovery.submit');
+    });
+});
 
 
 
